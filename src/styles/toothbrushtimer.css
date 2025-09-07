@@ -18,6 +18,41 @@
   margin-left: -1px;
 }
 
-.align-down20px {
-  margin-top: 20px;
+.align-down40px {
+  margin-top: 40px;
+}
+
+.center-frame {
+  position: absolute;
+}
+
+.timer-card {
+  padding-inline: 10px;
+  box-sizing: border-box;
+  font-family: "Roboto Mono", monospace;
+  font-weight: bold;
+  color: #6fc1db;
+  background-color: #13151b;
+  border-radius: 10px;
+  width: 100%;
+  font-size: 42px;
+  min-width: 140px;
+}
+
+.button:hover {
+  background-color: #1a1e28;
+  cursor: pointer;
+}
+
+.timer-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.timer-minor {
+  font-size: 22px;
+  color: #73848E;
 }
