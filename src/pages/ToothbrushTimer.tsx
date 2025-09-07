@@ -9,14 +9,6 @@ import { useState, useEffect } from "react";
 
 function ToothbrushTimer() {
 
-  // Images 
-  const layers = [
-    { src: Teeth, flipH: false, flipV: false, xOffset: 0, yOffset: 0 },
-    { src: Teeth, flipH: true, flipV: false, xOffset: -1, yOffset: 0 },
-    { src: Teeth, flipH: false, flipV: true, xOffset: 0, yOffset: 40 },
-    { src: Teeth, flipH: true, flipV: true, xOffset: -1, yOffset: 40 },
-  ];
-
   // Timers
   const [running, setRunning] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
