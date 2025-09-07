@@ -1,6 +1,6 @@
-//import Inside from '../assets/ToothbrushTimer/Inside.png';
-//import Topside from '../assets/ToothbrushTimer/Topside.png';
-//import Outside from '../assets/ToothbrushTimer/Outside.png';
+import Inside from '../assets/ToothbrushTimer/Inside.png';
+import Topside from '../assets/ToothbrushTimer/Topside.png';
+import Outside from '../assets/ToothbrushTimer/Outside.png';
 import Teeth from '../assets/ToothbrushTimer/Teeth.png';
 
 import '../styles/toothbrushtimer.css'
@@ -8,6 +8,16 @@ import '../styles/toothbrushtimer.css'
 import { useState, useEffect } from "react";
 
 function ToothbrushTimer() {
+
+  // Images 
+  const layers = [
+    { src: Teeth, flipH: false, flipV: false, xOffset: 0, yOffset: 0 },
+    { src: Teeth, flipH: true, flipV: false, xOffset: -1, yOffset: 0 },
+    { src: Teeth, flipH: false, flipV: true, xOffset: 0, yOffset: 40 },
+    { src: Teeth, flipH: true, flipV: true, xOffset: -1, yOffset: 40 },
+  ];
+
+  // Timers
   const [running, setRunning] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -32,7 +42,7 @@ function ToothbrushTimer() {
     return () => clearInterval(interval);
   }, [running, startTime]);
 
-  const phase = startTime ? Math.floor(elapsedTime / SHORT_PHASE_DURATION) + 1 : 1;
+  const phase = startTime ? Math.floor(elapsedTime / SHORT_PHASE_DURATION) + 1 : 0;
 
   const shortTimer = startTime ? Math.max(((SHORT_PHASE_DURATION - (elapsedTime % SHORT_PHASE_DURATION)) / 1000)- 0.1,0) : 9.9;
   
@@ -49,14 +59,39 @@ function ToothbrushTimer() {
 
   return (
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <div>
+        <div className='center-frame'>
           <div style={{ display: 'flex', alignItems: 'center'}}>
-            <img src={Teeth} className="Teeth image" />
-            <img src={Teeth} className="Teeth image flip-horizontal align-left1px" />
+            {/* TopLeft */}
+            <div className="quadrant">
+              <img src={Teeth} className="image base" />
+              {phase === 1 && <img src={Outside} className="image overlay" />}
+              {phase === 2 && <img src={Topside} className="image overlay" />}
+              {phase === 3 && <img src={Inside} className="image overlay" />}
+            </div>  
+
+            {/* TopRight */}
+            <div className="quadrant flip-horizontal align-left1px">
+              <img src={Teeth} className="image base" />
+              {phase === 4 && <img src={Inside} className="image overlay" />}
+              {phase === 5 && <img src={Topside} className="image overlay" />}
+              {phase === 6 && <img src={Outside} className="image overlay" />}
+            </div>            
           </div>
           <div style={{ display: 'flex', alignItems: 'center'}}>
-            <img src={Teeth} className="Teeth image flip-vertical align-down40px" />
-            <img src={Teeth} className="Teeth image flip-horizontal flip-vertical align-left1px align-down40px" />
+            {/* BottomLeft */}
+            <div className="quadrant flip-vertical align-down40px">
+              <img src={Teeth} className="image base" />
+              {phase === 10 && <img src={Inside} className="image overlay" />}
+              {phase === 11 && <img src={Topside} className="image overlay" />}
+              {phase === 12 && <img src={Outside} className="image overlay" />}
+            </div>  
+            {/* BottomLeft */}
+            <div className="quadrant flip-vertical flip-horizontal align-left1px align-down40px">
+              <img src={Teeth} className="image base" />
+              {phase === 7 && <img src={Outside} className="image overlay" />}
+              {phase === 8 && <img src={Topside} className="image overlay" />}
+              {phase === 9 && <img src={Inside} className="image overlay" />}
+            </div> 
           </div>
         </div>
         <div className='center-frame'>
