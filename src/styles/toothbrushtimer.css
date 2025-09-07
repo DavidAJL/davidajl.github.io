@@ -1,0 +1,23 @@
+.image {
+    image-rendering: pixelated;
+}
+
+.flip-horizontal {
+  transform: scaleX(-1);
+}
+
+.flip-vertical {
+  transform: scaleY(-1);
+}
+
+.flip-horizontal.flip-vertical {
+  transform: scale(-1, -1);
+}
+
+.align-left1px {
+  margin-left: -1px;
+}
+
+.align-down20px {
+  margin-top: 20px;
+}
