@@ -15,9 +15,10 @@ function ToothbrushTimer() {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   const TOTAL_PHASES = 12;
-  const LONG_DURATION = 2 * 60 * 1000;
-  const SHORT_PHASE_DURATION = LONG_DURATION/TOTAL_PHASES;
+  const LONG_DURATION = 2 * 60 * 1000; //2 Minutes in ms
+  const SHORT_PHASE_DURATION = LONG_DURATION / TOTAL_PHASES; 
 
+  // Pressing start updates StartTime, sets running to true, and set's ElapsedTime to 0. Omitting ElapsedTime causes 
   function start() {
     setStartTime(Date.now());
     setRunning(true);

@@ -1,0 +1,33 @@
+.user-info-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 25px;
+  justify-content: center;
+}
+
+.user-info-name {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+@media (max-width: 399px) {
+  .user-info-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.ProfilePicture {
+  height: 10em;
+  will-change: filter;
+  transition: filter 300ms;
+  border-radius: 2em;
+}
+.ProfilePicture:hover {
+  filter: drop-shadow(0 0 2em #6AC1DEaa);
+}
+
+
