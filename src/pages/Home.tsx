@@ -27,8 +27,9 @@ function Home() {
         </button>
       </div> */}
       <h2 style={{marginTop: '50px'}}>My Projects:</h2>
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         <Link to="/toothbrushtimer">ToothbrushTimer</Link>
+        {/* <Link to="/counter">Counter</Link> */}
       </div>
     </>
   );

@@ -2,6 +2,7 @@ import Inside from '../assets/ToothbrushTimer/Inside.png';
 import Topside from '../assets/ToothbrushTimer/Topside.png';
 import Outside from '../assets/ToothbrushTimer/Outside.png';
 import Teeth from '../assets/ToothbrushTimer/Teeth.png';
+import BrushSound from '../assets/ToothbrushTimer/BrushSound.mp3';
 
 import '../styles/toothbrushtimer.css'
 
@@ -15,7 +16,7 @@ function ToothbrushTimer() {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   const TOTAL_PHASES = 12;
-  const LONG_DURATION = 2 * 60 * 1000; //2 Minutes in ms
+  const LONG_DURATION = 2 * 60 * 1000; // 2 Minutes in ms
   const SHORT_PHASE_DURATION = LONG_DURATION / TOTAL_PHASES; 
 
   // Pressing start updates StartTime, sets running to true, and set's ElapsedTime to 0. Omitting ElapsedTime causes 
@@ -23,6 +24,12 @@ function ToothbrushTimer() {
     setStartTime(Date.now());
     setRunning(true);
     setElapsedTime(0);
+  }
+
+  function playSound() {
+    const audio = new Audio(BrushSound);
+    audio.volume = 0.5;
+    audio.play();
   }
 
   useEffect(() => {
@@ -49,6 +56,12 @@ function ToothbrushTimer() {
       setStartTime(null);
     }
   }, [longTimer, running]);
+
+  useEffect(() => {
+    if (!running || phase === 0 || phase > TOTAL_PHASES) return;
+    console.log(`Phase changed to ${phase}`);
+    playSound();
+  }, [phase]);
 
   return (
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>

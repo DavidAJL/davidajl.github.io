@@ -1,0 +1,10 @@
+.big-button {
+  width: 80vw;
+  height: 80vh;
+  box-sizing: border-box;
+  font-size: 10vw;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0;
+  background-color: #373b3f;
+}
