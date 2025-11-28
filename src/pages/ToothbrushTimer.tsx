@@ -6,7 +6,7 @@ import BrushSound from '../assets/ToothbrushTimer/BrushSound.mp3';
 
 import '../styles/toothbrushtimer.css'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function ToothbrushTimer() {
 
@@ -19,17 +19,33 @@ function ToothbrushTimer() {
   const LONG_DURATION = 2 * 60 * 1000; // 2 Minutes in ms
   const SHORT_PHASE_DURATION = LONG_DURATION / TOTAL_PHASES; 
 
+  // Sound
+  const audioRef = useRef<HTMLAudioElement>(new Audio(BrushSound));
+  
+  useEffect(() => {
+    audioRef.current.volume = 0.75;
+  }, []);
+
   // Pressing start updates StartTime, sets running to true, and set's ElapsedTime to 0. Omitting ElapsedTime causes 
   function start() {
     setStartTime(Date.now());
     setRunning(true);
     setElapsedTime(0);
+
+    // Unlock audio on the first user gesture
+    if (audioRef.current) {
+      audioRef.current.play().then(() => {
+        audioRef.current?.pause();
+        audioRef.current.currentTime = 0;
+      });
+    }
   }
 
   function playSound() {
-    const audio = new Audio(BrushSound);
-    audio.volume = 0.5;
-    audio.play();
+    const a = audioRef.current;
+    if (!a) return;
+    a.currentTime = 0;
+    a.play().catch(() => {});
   }
 
   useEffect(() => {
