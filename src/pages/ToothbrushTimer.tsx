@@ -8,6 +8,8 @@ import '../styles/toothbrushtimer.css'
 
 import { useState, useEffect, useRef } from "react";
 
+const version = "1:2";
+
 function ToothbrushTimer() {
 
   // Timers
@@ -16,20 +18,44 @@ function ToothbrushTimer() {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   const TOTAL_PHASES = 12;
-  const LONG_DURATION = 2 * 60 * 1000; // 2 Minutes in ms
-  const SHORT_PHASE_DURATION = LONG_DURATION / TOTAL_PHASES; 
+  const LONG_DURATION = 2 * 60 * 1000;
+  const SHORT_PHASE_DURATION = LONG_DURATION / TOTAL_PHASES;
 
-  // Sound
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Audio pool – 12 pre-unlocked sound objects
+  const audioPoolRef = useRef<HTMLAudioElement[]>([]);
+  const poolIndexRef = useRef(0);
 
-  // Pressing start updates StartTime, sets running to true, and set's ElapsedTime to 0. Omitting ElapsedTime causes 
+  function logVersion() {
+    console.log("Toothbrush Timer Version", version);
+  }
+
   function start() {
-    // Unlock audio on iOS/Safari
-    if (!audioRef.current) {
-      audioRef.current = new Audio(BrushSound);
-      audioRef.current.volume = 0.75;
-      audioRef.current.play().catch(() => {});
-    }
+    logVersion();
+
+    // Create & unlock audio only once per run
+    audioPoolRef.current = Array.from({ length: TOTAL_PHASES }, () => {
+      const a = new Audio(BrushSound);
+      a.volume = 0.75;
+      return a;
+    });
+
+    const pool = audioPoolRef.current;
+    if (!pool.length) return;
+
+    // "Prime" all audio objects WITHOUT playing them
+    pool.forEach(a => {
+      a.load();     // Important: load() does not play sound but counts as a gesture-allowed action
+      a.pause();    // Make sure it's stopped, even if iOS tried to auto-play
+      a.currentTime = 0;
+    });
+
+    // Now play exactly one sound for feedback
+    const first = pool[0];
+    first.currentTime = 0;
+    first.play().catch(() => {});
+
+    // Reset the pool index after playing first
+    poolIndexRef.current = 1 % pool.length;
 
     setStartTime(Date.now());
     setRunning(true);
@@ -37,11 +63,17 @@ function ToothbrushTimer() {
   }
 
   function playSound() {
-    const a = new Audio(BrushSound);
-    a.volume = 0.75;
+    const pool = audioPoolRef.current;
+    if (!pool.length) return;
+
+    const a = pool[poolIndexRef.current % pool.length];
+    poolIndexRef.current++;
+
+    a.currentTime = 0;
     a.play().catch(() => {});
   }
 
+  // Timer ticking
   useEffect(() => {
     if (!running || startTime === null) return;
 
@@ -54,23 +86,27 @@ function ToothbrushTimer() {
 
   const phase = startTime ? Math.floor(elapsedTime / SHORT_PHASE_DURATION) + 1 : 0;
 
-  const shortTimer = startTime ? Math.max(((SHORT_PHASE_DURATION - (elapsedTime % SHORT_PHASE_DURATION)) / 1000)- 0.1,0) : 9.9;
-  
+  const shortTimer = startTime
+    ? Math.max(((SHORT_PHASE_DURATION - (elapsedTime % SHORT_PHASE_DURATION)) / 1000) - 0.1, 0)
+    : 9.9;
+
   const longTimer = startTime ? (LONG_DURATION - elapsedTime) / 1000 : 120;
   const longTimerMin = Math.floor(longTimer / 60);
   const longTimerSec = Math.floor(longTimer % 60);
 
-   useEffect(() => {
+  // Stop at end
+  useEffect(() => {
     if (longTimer <= 0 && running) {
       setRunning(false);
       setStartTime(null);
     }
   }, [longTimer, running]);
 
+  // Play on phase change (but not on phase 1)
   useEffect(() => {
     if (!running || phase <= 1 || phase > TOTAL_PHASES) return;
     playSound();
-  }, [phase]);
+  }, [phase, running]);
 
   return (
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
