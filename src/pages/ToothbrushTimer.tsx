@@ -24,25 +24,21 @@ function ToothbrushTimer() {
 
   // Pressing start updates StartTime, sets running to true, and set's ElapsedTime to 0. Omitting ElapsedTime causes 
   function start() {
+    // Unlock audio on iOS/Safari
     if (!audioRef.current) {
       audioRef.current = new Audio(BrushSound);
       audioRef.current.volume = 0.75;
+      audioRef.current.play().catch(() => {});
     }
-
-    // Play sound on start to fix iOS Safari audio context issue
-    playSound()
 
     setStartTime(Date.now());
     setRunning(true);
     setElapsedTime(0);
-    
   }
 
   function playSound() {
-    console.log("Playing sound");
-    const a = audioRef.current;
-    if (!a) return;
-    a.currentTime = 0;
+    const a = new Audio(BrushSound);
+    a.volume = 0.75;
     a.play().catch(() => {});
   }
 
