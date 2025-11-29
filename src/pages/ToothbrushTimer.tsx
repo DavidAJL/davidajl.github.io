@@ -20,28 +20,26 @@ function ToothbrushTimer() {
   const SHORT_PHASE_DURATION = LONG_DURATION / TOTAL_PHASES; 
 
   // Sound
-  const audioRef = useRef<HTMLAudioElement>(new Audio(BrushSound));
-  
-  useEffect(() => {
-    audioRef.current.volume = 0.75;
-  }, []);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Pressing start updates StartTime, sets running to true, and set's ElapsedTime to 0. Omitting ElapsedTime causes 
   function start() {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(BrushSound);
+      audioRef.current.volume = 0.75;
+    }
+
+    // Play sound on start to fix iOS Safari audio context issue
+    playSound()
+
     setStartTime(Date.now());
     setRunning(true);
     setElapsedTime(0);
-
-    // Unlock audio on the first user gesture
-    if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        audioRef.current?.pause();
-        audioRef.current.currentTime = 0;
-      });
-    }
+    
   }
 
   function playSound() {
+    console.log("Playing sound");
     const a = audioRef.current;
     if (!a) return;
     a.currentTime = 0;
@@ -74,8 +72,7 @@ function ToothbrushTimer() {
   }, [longTimer, running]);
 
   useEffect(() => {
-    if (!running || phase === 0 || phase > TOTAL_PHASES) return;
-    console.log(`Phase changed to ${phase}`);
+    if (!running || phase <= 1 || phase > TOTAL_PHASES) return;
     playSound();
   }, [phase]);
 
